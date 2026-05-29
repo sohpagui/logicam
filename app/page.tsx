@@ -27,9 +27,9 @@ export default async function Home() {
           <button className="text-sm text-gray-600 hover:text-blue-800 font-medium">
             Connexion
           </button>
-          <button className="text-sm bg-blue-800 text-white px-5 py-2 rounded-md hover:bg-blue-900 font-medium">
-            Publier une annonce
-          </button>
+          <Link href="/publier" className="text-sm bg-blue-800 text-white px-5 py-2 rounded-md hover:bg-blue-900 font-medium">
+  Publier une annonce
+</Link>
         </div>
       </nav>
 
