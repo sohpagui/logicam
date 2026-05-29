@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-
+import Link from 'next/link'
 async function getAnnonces() {
   const { data, error } = await supabase
     .from('annonces')
@@ -140,9 +140,9 @@ export default async function Home() {
                       Par {annonce.agents.nom}
                     </p>
                   )}
-                  <button className="w-full border border-blue-800 text-blue-800 py-2 rounded-md text-sm font-medium hover:bg-blue-800 hover:text-white transition">
-                    Voir les détails
-                  </button>
+                  <Link href={`/annonces/${annonce.id}`} className="block w-full border border-blue-800 text-blue-800 py-2 rounded-md text-sm font-medium hover:bg-blue-800 hover:text-white transition text-center">
+  Voir les détails
+</Link>
                 </div>
               </div>
             ))}
