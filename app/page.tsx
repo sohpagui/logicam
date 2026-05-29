@@ -1,5 +1,7 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import NavBar from './components/NavBar'
+
 async function getAnnonces() {
   const { data, error } = await supabase
     .from('annonces')
@@ -20,18 +22,7 @@ export default async function Home() {
   return (
     <main className="min-h-screen bg-gray-50">
 
-      {/* NAVIGATION */}
-      <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center">
-        <span className="text-xl font-bold text-blue-800 tracking-tight">LogiCam</span>
-        <div className="flex items-center gap-4">
-          <button className="text-sm text-gray-600 hover:text-blue-800 font-medium">
-            Connexion
-          </button>
-          <Link href="/publier" className="text-sm bg-blue-800 text-white px-5 py-2 rounded-md hover:bg-blue-900 font-medium">
-  Publier une annonce
-</Link>
-        </div>
-      </nav>
+      <NavBar />
 
       {/* HERO */}
       <section className="bg-blue-800 py-20 px-6">
@@ -65,8 +56,8 @@ export default async function Home() {
               <option value="500000">500 000 FCFA</option>
             </select>
             <Link href="/recherche" className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-md transition text-sm">
-  Rechercher
-</Link>
+              Rechercher
+            </Link>
           </div>
         </div>
       </section>
@@ -93,9 +84,9 @@ export default async function Home() {
       <section className="max-w-5xl mx-auto px-6 py-14">
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-xl font-bold text-gray-800">Annonces récentes</h2>
-          <button className="text-sm text-blue-800 font-medium hover:underline">
+          <Link href="/recherche" className="text-sm text-blue-800 font-medium hover:underline">
             Voir toutes les annonces
-          </button>
+          </Link>
         </div>
 
         {annonces.length === 0 ? (
@@ -140,9 +131,12 @@ export default async function Home() {
                       Par {annonce.agents.nom}
                     </p>
                   )}
-                  <Link href={`/annonces/${annonce.id}`} className="block w-full border border-blue-800 text-blue-800 py-2 rounded-md text-sm font-medium hover:bg-blue-800 hover:text-white transition text-center">
-  Voir les détails
-</Link>
+                  <Link
+                    href={`/annonces/${annonce.id}`}
+                    className="block w-full border border-blue-800 text-blue-800 py-2 rounded-md text-sm font-medium hover:bg-blue-800 hover:text-white transition text-center"
+                  >
+                    Voir les détails
+                  </Link>
                 </div>
               </div>
             ))}
