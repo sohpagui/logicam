@@ -47,8 +47,30 @@ export default async function PageAnnonce({ params }: { params: Promise<{ id: st
 
       <div className="max-w-5xl mx-auto px-6 py-10">
 
-        {/* IMAGE */}
-        <div className="w-full h-72 bg-gray-200 rounded-lg mb-8"></div>
+        {/* PHOTOS */}
+{annonce.photos && annonce.photos.length > 0 ? (
+  <div className="mb-8">
+    <img
+      src={annonce.photos[0]}
+      alt={annonce.titre}
+      className="w-full h-72 object-cover rounded-lg"
+    />
+    {annonce.photos.length > 1 && (
+      <div className="grid grid-cols-4 gap-2 mt-2">
+        {annonce.photos.slice(1).map((url: string, index: number) => (
+          <img
+            key={index}
+            src={url}
+            alt={`Photo ${index + 2}`}
+            className="w-full h-20 object-cover rounded-md border border-gray-200"
+          />
+        ))}
+      </div>
+    )}
+  </div>
+) : (
+  <div className="w-full h-72 bg-gray-200 rounded-lg mb-8"></div>
+)}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 

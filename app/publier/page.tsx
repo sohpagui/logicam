@@ -2,9 +2,14 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import { useAuth } from '../context/AuthContext'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 export default function PagePublier() {
+  const { user } = useAuth()
+  const router = useRouter()
+
   const [titre, setTitre] = useState('')
   const [description, setDescription] = useState('')
   const [type_bien, setTypeBien] = useState('')
@@ -13,13 +18,52 @@ export default function PagePublier() {
   const [prix, setPrix] = useState('')
   const [superficie, setSuperficie] = useState('')
   const [nombre_pieces, setNombrePieces] = useState('')
-  const [agent_email, setAgentEmail] = useState('')
+  const [photos, setPhotos] = useState<string[]>([])
+  const [fichiers, setFichiers] = useState<FileList | null>(null)
+  const [uploadEnCours, setUploadEnCours] = useState(false)
   const [envoi, setEnvoi] = useState<'idle' | 'chargement' | 'succes' | 'erreur'>('idle')
   const [erreurMessage, setErreurMessage] = useState('')
 
+  async function gererPhotos(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setFichiers(files)
+    setUploadEnCours(true)
+    setErreurMessage('')
+
+    const urlsPhotos: string[] = []
+
+    for (let i = 0; i < files.length; i++) {
+      const formData = new FormData()
+      formData.append('file', files[i])
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await response.json()
+
+      if (data.url) {
+        urlsPhotos.push(data.url)
+      } else {
+        setErreurMessage('Une photo n\'a pas pu être uploadée. Réessayez.')
+      }
+    }
+
+    setPhotos(urlsPhotos)
+    setUploadEnCours(false)
+  }
+
   async function publierAnnonce() {
-    if (!titre || !description || !type_bien || !ville || !quartier || !prix || !agent_email) {
+    if (!titre || !description || !type_bien || !ville || !quartier || !prix) {
       setErreurMessage('Veuillez remplir tous les champs obligatoires.')
+      return
+    }
+
+    if (!user) {
+      router.push('/auth')
       return
     }
 
@@ -29,11 +73,11 @@ export default function PagePublier() {
     const { data: agent, error: agentError } = await supabase
       .from('agents')
       .select('id')
-      .eq('email', agent_email)
+      .eq('email', user.email)
       .single()
 
     if (agentError || !agent) {
-      setErreurMessage('Aucun agent trouvé avec cet email. Vérifiez votre adresse ou contactez l\'administration.')
+      setErreurMessage('Votre compte agent est introuvable. Vérifiez que vous êtes bien connecté.')
       setEnvoi('idle')
       return
     }
@@ -50,7 +94,8 @@ export default function PagePublier() {
         superficie: superficie ? parseInt(superficie) : null,
         nombre_pieces: nombre_pieces ? parseInt(nombre_pieces) : null,
         statut: 'disponible',
-        agent_id: agent.id
+        agent_id: agent.id,
+        photos
       })
 
     if (error) {
@@ -85,7 +130,6 @@ export default function PagePublier() {
   return (
     <main className="min-h-screen bg-gray-50">
 
-      {/* NAVIGATION */}
       <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center">
         <Link href="/" className="text-xl font-bold text-blue-800 tracking-tight">
           LogiCam
@@ -98,25 +142,10 @@ export default function PagePublier() {
       <div className="max-w-2xl mx-auto px-6 py-14">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Publier une annonce</h1>
         <p className="text-gray-500 text-sm mb-8">
-          Remplissez ce formulaire pour mettre votre logement en ligne. Seuls les agents enregistrés peuvent publier.
+          Remplissez ce formulaire pour mettre votre logement en ligne.
         </p>
 
         <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-5">
-
-          {/* EMAIL AGENT */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Votre email agent <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              value={agent_email}
-              onChange={(e) => setAgentEmail(e.target.value)}
-              placeholder="Ex : mbarga@gmail.com"
-              className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-            <p className="text-xs text-gray-400 mt-1">Doit correspondre à un compte agent enregistré.</p>
-          </div>
 
           {/* TITRE */}
           <div>
@@ -236,6 +265,58 @@ export default function PagePublier() {
             />
           </div>
 
+          {/* PHOTOS */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Photos du logement
+            </label>
+            <div className="border-2 border-dashed border-gray-300 rounded-md px-4 py-6 text-center hover:border-blue-400 transition">
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={gererPhotos}
+                className="hidden"
+                id="input-photos"
+              />
+              <label htmlFor="input-photos" className="cursor-pointer">
+                {uploadEnCours ? (
+                  <p className="text-sm text-blue-600">Upload en cours...</p>
+                ) : photos.length > 0 ? (
+                  <p className="text-sm text-green-600 font-medium">
+                    {photos.length} photo{photos.length > 1 ? 's' : ''} ajoutée{photos.length > 1 ? 's' : ''}
+                  </p>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-500">Cliquez pour sélectionner des photos</p>
+                    <p className="text-xs text-gray-400 mt-1">JPG, PNG — plusieurs photos acceptées</p>
+                  </>
+                )}
+              </label>
+            </div>
+
+            {/* APERCU PHOTOS */}
+            {photos.length > 0 && (
+              <div className="grid grid-cols-3 gap-3 mt-4">
+                {photos.map((url, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={url}
+                      alt={`Photo ${index + 1}`}
+                      className="w-full h-24 object-cover rounded-md border border-gray-200"
+                    />
+                    <button
+                      onClick={() => setPhotos(photos.filter((_, i) => i !== index))}
+                      className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hover:bg-red-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
           {erreurMessage && (
             <p className="text-red-500 text-sm">{erreurMessage}</p>
           )}
@@ -246,7 +327,7 @@ export default function PagePublier() {
 
           <button
             onClick={publierAnnonce}
-            disabled={envoi === 'chargement'}
+            disabled={envoi === 'chargement' || uploadEnCours}
             className="w-full bg-blue-800 text-white py-3 rounded-md text-sm font-semibold hover:bg-blue-900 transition disabled:opacity-50"
           >
             {envoi === 'chargement' ? 'Publication en cours...' : 'Publier l\'annonce'}
