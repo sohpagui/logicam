@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 
@@ -14,6 +14,7 @@ type Annonce = {
   nombre_pieces: number | null
   type_bien: string
   statut: string
+  photos: string[]
   agents: { nom: string; verifie: boolean } | null
 }
 
@@ -63,7 +64,6 @@ export default function PageRecherche() {
   return (
     <main className="min-h-screen bg-gray-50">
 
-      {/* NAVIGATION */}
       <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center">
         <Link href="/" className="text-xl font-bold text-blue-800 tracking-tight">
           LogiCam
@@ -73,7 +73,6 @@ export default function PageRecherche() {
         </Link>
       </nav>
 
-      {/* FILTRES */}
       <section className="bg-blue-800 py-10 px-6">
         <div className="max-w-4xl mx-auto">
           <h1 className="text-2xl font-bold text-white mb-6">Rechercher un logement</h1>
@@ -125,7 +124,6 @@ export default function PageRecherche() {
         </div>
       </section>
 
-      {/* RESULTATS */}
       <section className="max-w-5xl mx-auto px-6 py-10">
 
         {!rechercheFaite && (
@@ -159,7 +157,15 @@ export default function PageRecherche() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {annonces.map((annonce) => (
                 <div key={annonce.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition">
-                  <div className="h-44 bg-gray-200"></div>
+                  {annonce.photos && annonce.photos.length > 0 ? (
+                    <img
+                      src={annonce.photos[0]}
+                      alt={annonce.titre}
+                      className="h-44 w-full object-cover"
+                    />
+                  ) : (
+                    <div className="h-44 bg-gray-200"></div>
+                  )}
                   <div className="p-4">
                     <div className="flex justify-between items-start mb-2">
                       <h3 className="font-semibold text-gray-800 text-sm">{annonce.titre}</h3>

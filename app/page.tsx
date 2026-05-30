@@ -97,7 +97,15 @@ export default async function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {annonces.map((annonce) => (
               <div key={annonce.id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition">
-                <div className="h-44 bg-gray-200"></div>
+                {annonce.photos && annonce.photos.length > 0 ? (
+  <img
+    src={annonce.photos[0]}
+    alt={annonce.titre}
+    className="h-44 w-full object-cover"
+  />
+) : (
+  <div className="h-44 bg-gray-200"></div>
+)}
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-semibold text-gray-800 text-sm">{annonce.titre}</h3>
