@@ -1,5 +1,6 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import NavBar from '../../components/NavBar'
 
 async function getAnnonce(id: string) {
   const { data, error } = await supabase
@@ -36,14 +37,7 @@ export default async function PageAnnonce({ params }: { params: Promise<{ id: st
     <main className="min-h-screen bg-gray-50">
 
       {/* NAVIGATION */}
-      <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold text-blue-800 tracking-tight">
-          LogiCam
-        </Link>
-        <Link href="/" className="text-sm text-gray-600 hover:text-blue-800 font-medium">
-          Retour aux annonces
-        </Link>
-      </nav>
+      <NavBar />
 
       <div className="max-w-5xl mx-auto px-6 py-10">
 

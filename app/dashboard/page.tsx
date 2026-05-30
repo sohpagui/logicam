@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import NavBar from '../components/NavBar'
 
 type Annonce = {
   id: string
@@ -131,20 +132,7 @@ export default function PageDashboard() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold text-blue-800 tracking-tight">
-          LogiCam
-        </Link>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-gray-600">{agent.nom}</span>
-          <button
-            onClick={gererDeconnexion}
-            className="text-sm text-red-500 hover:underline font-medium"
-          >
-            Se déconnecter
-          </button>
-        </div>
-      </nav>
+     <NavBar />
 
       <div className="max-w-5xl mx-auto px-6 py-10">
 

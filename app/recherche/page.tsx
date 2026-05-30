@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import NavBar from '../components/NavBar'
 
 type Annonce = {
   id: string
@@ -64,14 +65,7 @@ export default function PageRecherche() {
   return (
     <main className="min-h-screen bg-gray-50">
 
-      <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold text-blue-800 tracking-tight">
-          LogiCam
-        </Link>
-        <Link href="/" className="text-sm text-gray-600 hover:text-blue-800 font-medium">
-          Retour à l'accueil
-        </Link>
-      </nav>
+      <NavBar />
 
       <section className="bg-blue-800 py-10 px-6">
         <div className="max-w-4xl mx-auto">

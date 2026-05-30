@@ -3,6 +3,7 @@
 import { useState, use } from 'react'
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
+import NavBar from '../../components/NavBar'
 
 export default function PageContact({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -73,14 +74,7 @@ export default function PageContact({ params }: { params: Promise<{ id: string }
     <main className="min-h-screen bg-gray-50">
 
       {/* NAVIGATION */}
-      <nav className="bg-white border-b border-gray-200 px-8 py-4 flex justify-between items-center">
-        <Link href="/" className="text-xl font-bold text-blue-800 tracking-tight">
-          LogiCam
-        </Link>
-        <Link href={`/annonces/${id}`} className="text-sm text-gray-600 hover:text-blue-800 font-medium">
-          Retour à l'annonce
-        </Link>
-      </nav>
+      <NavBar />
 
       <div className="max-w-lg mx-auto px-6 py-14">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Contacter l'agent</h1>
