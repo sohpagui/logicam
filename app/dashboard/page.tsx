@@ -132,7 +132,7 @@ export default function PageDashboard() {
 
   return (
     <main className="min-h-screen bg-gray-50">
-     <NavBar />
+      <NavBar />
 
       <div className="max-w-5xl mx-auto px-6 py-10">
 
@@ -248,6 +248,12 @@ export default function PageDashboard() {
                         className="text-xs text-blue-800 hover:underline font-medium"
                       >
                         Voir
+                      </Link>
+                      <Link
+                        href={`/annonces/modifier/${annonce.id}`}
+                        className="text-xs text-green-600 hover:underline font-medium"
+                      >
+                        Modifier
                       </Link>
                       <button
                         onClick={() => supprimerAnnonce(annonce.id)}
