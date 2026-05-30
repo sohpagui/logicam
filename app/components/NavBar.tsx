@@ -3,10 +3,31 @@
 import Link from 'next/link'
 import { useAuth } from '../context/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 
 export default function NavBar() {
   const { user, chargement, seDeconnecter } = useAuth()
   const router = useRouter()
+  const [estAdmin, setEstAdmin] = useState(false)
+
+  useEffect(() => {
+    if (user) {
+      verifierAdmin()
+    } else {
+      setEstAdmin(false)
+    }
+  }, [user])
+
+  async function verifierAdmin() {
+    const { data } = await supabase
+      .from('agents')
+      .select('role')
+      .eq('email', user?.email)
+      .single()
+
+    setEstAdmin(data?.role === 'admin')
+  }
 
   async function gererDeconnexion() {
     await seDeconnecter()
@@ -22,6 +43,14 @@ export default function NavBar() {
       <div className="flex items-center gap-4">
         {chargement ? null : user ? (
           <>
+            {estAdmin && (
+              <Link
+                href="/admin"
+                className="text-sm text-orange-500 hover:text-orange-600 font-medium"
+              >
+                Administration
+              </Link>
+            )}
             <Link
               href="/dashboard"
               className="text-sm text-gray-600 hover:text-blue-800 font-medium"
