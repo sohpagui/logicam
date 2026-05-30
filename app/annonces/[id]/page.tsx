@@ -122,7 +122,9 @@ export default async function PageAnnonce({ params }: { params: Promise<{ id: st
                       {annonce.agents.nom.charAt(0)}
                     </div>
                     <div>
-                      <p className="font-semibold text-gray-800 text-sm">{annonce.agents.nom}</p>
+                      <Link href={`/agent/${annonce.agent_id}`} className="font-semibold text-blue-800 text-sm hover:underline">
+  {annonce.agents.nom}
+</Link>
                       {annonce.agents.verifie && (
                         <p className="text-xs text-green-600 font-medium">Agent vérifié</p>
                       )}
