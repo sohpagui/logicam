@@ -52,11 +52,11 @@ export default function NavBar() {
               </Link>
             )}
             <Link
-              href="/dashboard"
-              className="text-sm text-gray-600 hover:text-blue-800 font-medium"
-            >
-              Mon espace
-            </Link>
+  href="/mon-espace"
+  className="text-sm text-gray-600 hover:text-blue-800 font-medium"
+>
+  Mon espace
+</Link>
             <button
               onClick={gererDeconnexion}
               className="text-sm text-red-500 hover:underline font-medium"
