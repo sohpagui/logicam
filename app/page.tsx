@@ -7,6 +7,7 @@ async function getAnnonces() {
     .from('annonces')
     .select('*, agents(nom, note, verifie)')
     .eq('statut', 'disponible')
+    .order('booste', { ascending: false })
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -114,9 +115,16 @@ export default async function Home() {
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-semibold text-gray-800 text-sm">{annonce.titre}</h3>
-                    <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
-                      Disponible
-                    </span>
+                    <div className="flex flex-col gap-1 items-end">
+  {annonce.booste && (
+    <span className="text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full font-medium">
+      Mis en avant
+    </span>
+  )}
+  <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+    Disponible
+  </span>
+</div>
                   </div>
                   <p className="text-xs text-gray-500 mb-3">{annonce.quartier}, {annonce.ville}</p>
                   <p className="text-blue-800 font-bold text-base mb-4">

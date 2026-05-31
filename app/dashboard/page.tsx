@@ -250,11 +250,17 @@ export default function PageDashboard() {
                         Voir
                       </Link>
                       <Link
-                        href={`/annonces/modifier/${annonce.id}`}
-                        className="text-xs text-green-600 hover:underline font-medium"
-                      >
-                        Modifier
-                      </Link>
+  href={`/annonces/modifier/${annonce.id}`}
+  className="text-xs text-green-600 hover:underline font-medium"
+>
+  Modifier
+</Link>
+<Link
+  href={`/boost/${annonce.id}`}
+  className="text-xs text-orange-500 hover:underline font-medium"
+>
+  Booster
+</Link>
                       <button
                         onClick={() => supprimerAnnonce(annonce.id)}
                         className="text-xs text-red-500 hover:underline font-medium"
