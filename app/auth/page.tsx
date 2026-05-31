@@ -17,6 +17,29 @@ export default function PageAuth() {
   const [motDePasse, setMotDePasse] = useState('')
   const [erreur, setErreur] = useState('')
   const [chargement, setChargement] = useState(false)
+  const [resetEnvoye, setResetEnvoye] = useState(false)
+
+  async function envoyerEmailReset() {
+    if (!email) {
+      setErreur('Entrez votre email pour réinitialiser votre mot de passe.')
+      return
+    }
+
+    setChargement(true)
+    setErreur('')
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/reset`
+    })
+
+    if (error) {
+      setErreur('Une erreur s\'est produite. Vérifiez votre email.')
+    } else {
+      setResetEnvoye(true)
+    }
+
+    setChargement(false)
+  }
 
   async function handleSoumission() {
     if (!email || !motDePasse) {
@@ -93,10 +116,9 @@ export default function PageAuth() {
 
       <div className="max-w-md mx-auto px-6 py-16">
 
-        {/* ONGLETS CONNEXION / INSCRIPTION */}
         <div className="flex border-b border-gray-200 mb-8">
           <button
-            onClick={() => { setMode('connexion'); setErreur('') }}
+            onClick={() => { setMode('connexion'); setErreur(''); setResetEnvoye(false) }}
             className={`flex-1 py-3 text-sm font-medium border-b-2 transition ${
               mode === 'connexion'
                 ? 'border-blue-800 text-blue-800'
@@ -106,7 +128,7 @@ export default function PageAuth() {
             Connexion
           </button>
           <button
-            onClick={() => { setMode('inscription'); setErreur('') }}
+            onClick={() => { setMode('inscription'); setErreur(''); setResetEnvoye(false) }}
             className={`flex-1 py-3 text-sm font-medium border-b-2 transition ${
               mode === 'inscription'
                 ? 'border-blue-800 text-blue-800'
@@ -117,134 +139,159 @@ export default function PageAuth() {
           </button>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-5">
-
-          {/* CHOIX DU ROLE (inscription seulement) */}
-          {mode === 'inscription' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Je suis
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => setRole('locataire')}
-                  className={`py-3 rounded-md text-sm font-medium border transition ${
-                    role === 'locataire'
-                      ? 'bg-blue-800 text-white border-blue-800'
-                      : 'bg-white text-gray-600 border-gray-300 hover:border-blue-800'
-                  }`}
-                >
-                  Locataire
-                </button>
-                <button
-                  onClick={() => setRole('agent')}
-                  className={`py-3 rounded-md text-sm font-medium border transition ${
-                    role === 'agent'
-                      ? 'bg-blue-800 text-white border-blue-800'
-                      : 'bg-white text-gray-600 border-gray-300 hover:border-blue-800'
-                  }`}
-                >
-                  Agent immobilier
-                </button>
-              </div>
+        {resetEnvoye ? (
+          <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
+            <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+              <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
             </div>
-          )}
-
-          {/* NOM (inscription seulement) */}
-          {mode === 'inscription' && (
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Nom complet <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                value={nom}
-                onChange={(e) => setNom(e.target.value)}
-                placeholder="Ex : Jean-Pierre Mbarga"
-                className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-              />
-            </div>
-          )}
-
-          {/* EMAIL */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Adresse email <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Ex : pascal@gmail.com"
-              className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
+            <h3 className="font-semibold text-gray-800 mb-2">Email envoyé</h3>
+            <p className="text-sm text-gray-500 mb-4">
+              Un lien de réinitialisation a été envoyé à <span className="font-medium">{email}</span>. Vérifiez votre boîte mail.
+            </p>
+            <button
+              onClick={() => setResetEnvoye(false)}
+              className="text-sm text-blue-800 font-medium hover:underline"
+            >
+              Retour à la connexion
+            </button>
           </div>
+        ) : (
+          <div className="bg-white border border-gray-200 rounded-lg p-6 space-y-5">
 
-          {/* MOT DE PASSE */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Mot de passe <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="password"
-              value={motDePasse}
-              onChange={(e) => setMotDePasse(e.target.value)}
-              placeholder="Minimum 6 caractères"
-              className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-            />
-          </div>
-
-          {/* TELEPHONE ET VILLE (inscription seulement) */}
-          {mode === 'inscription' && (
-            <div className="grid grid-cols-2 gap-4">
+            {mode === 'inscription' && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Téléphone <span className="text-red-500">*</span>
+                  Je suis
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={() => setRole('locataire')}
+                    className={`py-3 rounded-md text-sm font-medium border transition ${
+                      role === 'locataire'
+                        ? 'bg-blue-800 text-white border-blue-800'
+                        : 'bg-white text-gray-600 border-gray-300 hover:border-blue-800'
+                    }`}
+                  >
+                    Locataire
+                  </button>
+                  <button
+                    onClick={() => setRole('agent')}
+                    className={`py-3 rounded-md text-sm font-medium border transition ${
+                      role === 'agent'
+                        ? 'bg-blue-800 text-white border-blue-800'
+                        : 'bg-white text-gray-600 border-gray-300 hover:border-blue-800'
+                    }`}
+                  >
+                    Agent immobilier
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {mode === 'inscription' && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nom complet <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
-                  value={telephone}
-                  onChange={(e) => setTelephone(e.target.value)}
-                  placeholder="Ex : 699123456"
+                  value={nom}
+                  onChange={(e) => setNom(e.target.value)}
+                  placeholder="Ex : Jean-Pierre Mbarga"
                   className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Ville <span className="text-red-500">*</span>
-                </label>
-                <select
-                  value={ville}
-                  onChange={(e) => setVille(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
-                >
-                  <option value="">Choisir</option>
-                  <option value="Yaoundé">Yaoundé</option>
-                  <option value="Douala">Douala</option>
-                  <option value="Bafoussam">Bafoussam</option>
-                  <option value="Garoua">Garoua</option>
-                </select>
-              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Adresse email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="Ex : pascal@gmail.com"
+                className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
             </div>
-          )}
 
-          {erreur && (
-            <p className="text-red-500 text-sm">{erreur}</p>
-          )}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Mot de passe <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="password"
+                value={motDePasse}
+                onChange={(e) => setMotDePasse(e.target.value)}
+                placeholder="Minimum 6 caractères"
+                className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+              />
+            </div>
 
-          <button
-            onClick={handleSoumission}
-            disabled={chargement}
-            className="w-full bg-blue-800 text-white py-3 rounded-md text-sm font-semibold hover:bg-blue-900 transition disabled:opacity-50"
-          >
-            {chargement
-              ? 'Chargement...'
-              : mode === 'connexion'
-              ? 'Se connecter'
-              : 'Créer mon compte'}
-          </button>
+            {mode === 'inscription' && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Téléphone <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    value={telephone}
+                    onChange={(e) => setTelephone(e.target.value)}
+                    placeholder="Ex : 699123456"
+                    className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Ville <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={ville}
+                    onChange={(e) => setVille(e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  >
+                    <option value="">Choisir</option>
+                    <option value="Yaoundé">Yaoundé</option>
+                    <option value="Douala">Douala</option>
+                    <option value="Bafoussam">Bafoussam</option>
+                    <option value="Garoua">Garoua</option>
+                  </select>
+                </div>
+              </div>
+            )}
 
-        </div>
+            {erreur && (
+              <p className="text-red-500 text-sm">{erreur}</p>
+            )}
+
+            <button
+              onClick={handleSoumission}
+              disabled={chargement}
+              className="w-full bg-blue-800 text-white py-3 rounded-md text-sm font-semibold hover:bg-blue-900 transition disabled:opacity-50"
+            >
+              {chargement
+                ? 'Chargement...'
+                : mode === 'connexion'
+                ? 'Se connecter'
+                : 'Créer mon compte'}
+            </button>
+
+            {mode === 'connexion' && (
+              <button
+                onClick={envoyerEmailReset}
+                disabled={chargement}
+                className="w-full text-xs text-blue-800 hover:underline font-medium text-center"
+              >
+                Mot de passe oublié ?
+              </button>
+            )}
+
+          </div>
+        )}
       </div>
 
       <footer className="bg-blue-900 py-8 px-6 mt-8">
