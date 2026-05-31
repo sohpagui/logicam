@@ -10,23 +10,35 @@ export default function NavBar() {
   const { user, chargement, seDeconnecter } = useAuth()
   const router = useRouter()
   const [estAdmin, setEstAdmin] = useState(false)
+  const [messagesNonLus, setMessagesNonLus] = useState(0)
 
   useEffect(() => {
     if (user) {
-      verifierAdmin()
+      verifierRole()
     } else {
       setEstAdmin(false)
+      setMessagesNonLus(0)
     }
   }, [user])
 
-  async function verifierAdmin() {
-    const { data } = await supabase
+  async function verifierRole() {
+    const { data: agent } = await supabase
       .from('agents')
-      .select('role')
+      .select('id, role')
       .eq('email', user?.email)
       .single()
 
-    setEstAdmin(data?.role === 'admin')
+    if (!agent) return
+
+    setEstAdmin(agent.role === 'admin')
+
+    const { count } = await supabase
+      .from('messages')
+      .select('id', { count: 'exact' })
+      .eq('agent_id', agent.id)
+      .eq('lu', false)
+
+    setMessagesNonLus(count || 0)
   }
 
   async function gererDeconnexion() {
@@ -52,11 +64,16 @@ export default function NavBar() {
               </Link>
             )}
             <Link
-  href="/mon-espace"
-  className="text-sm text-gray-600 hover:text-blue-800 font-medium"
->
-  Mon espace
-</Link>
+              href="/mon-espace"
+              className="text-sm text-gray-600 hover:text-blue-800 font-medium relative"
+            >
+              Mon espace
+              {messagesNonLus > 0 && (
+                <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
+                  {messagesNonLus > 9 ? '9+' : messagesNonLus}
+                </span>
+              )}
+            </Link>
             <button
               onClick={gererDeconnexion}
               className="text-sm text-red-500 hover:underline font-medium"
