@@ -2,23 +2,20 @@
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import NavBar from '../../components/NavBar'
 
 export default function PageReset() {
-  const router = useRouter()
   const [motDePasse, setMotDePasse] = useState('')
   const [confirmation, setConfirmation] = useState('')
   const [etape, setEtape] = useState<'reset' | 'succes' | 'erreur'>('reset')
   const [erreur, setErreur] = useState('')
   const [chargement, setChargement] = useState(false)
-  const [sessionPrete, setSessionPrete] = useState(false)
 
   useEffect(() => {
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'PASSWORD_RECOVERY') {
-        setSessionPrete(true)
+        console.log('Session de récupération de mot de passe détectée')
       }
     })
   }, [])
@@ -119,17 +116,8 @@ export default function PageReset() {
           </div>
 
           {erreur && (
-  <p className="text-red-500 text-sm mb-4">{erreur}</p>
-)}
-
-{mode === 'connexion' && (
-  <button
-    onClick={envoyerEmailReset}
-    className="text-xs text-blue-800 hover:underline font-medium"
-  >
-    Mot de passe oublié ?
-  </button>
-)}
+            <p className="text-red-500 text-sm">{erreur}</p>
+          )}
 
           {etape === 'erreur' && (
             <Link
