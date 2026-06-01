@@ -168,12 +168,20 @@ export default function PageDashboard() {
               </div>
             </div>
           </div>
-          <Link
-            href="/publier"
-            className="bg-blue-800 text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-blue-900 transition"
-          >
-            Nouvelle annonce
-          </Link>
+          <div className="flex gap-3">
+  <Link
+    href="/verification"
+    className="border border-blue-800 text-blue-800 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-50 transition"
+  >
+    Vérification
+  </Link>
+  <Link
+    href="/publier"
+    className="bg-blue-800 text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-blue-900 transition"
+  >
+    Nouvelle annonce
+  </Link>
+</div>
         </div>
 
         {/* STATISTIQUES */}
