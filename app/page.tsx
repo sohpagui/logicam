@@ -5,7 +5,7 @@ import NavBar from './components/NavBar'
 async function getAnnonces() {
   const { data, error } = await supabase
     .from('annonces')
-    .select('*, agents(nom, note, verifie)')
+    .select('*, agents(nom, note, verifie, photo_profil)')
     .eq('statut', 'disponible')
     .order('booste', { ascending: false })
     .order('created_at', { ascending: false })
@@ -148,10 +148,23 @@ export default async function Home() {
                     )}
                   </div>
                   {annonce.agents && (
-                    <p className="text-xs text-gray-400 mb-3">
-                      Par {annonce.agents.nom}
-                    </p>
-                  )}
+  <div className="flex items-center gap-2 mb-3">
+    <div className="w-6 h-6 rounded-full overflow-hidden border border-gray-200 flex-shrink-0">
+      {annonce.agents.photo_profil ? (
+        <img
+          src={annonce.agents.photo_profil}
+          alt={annonce.agents.nom}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="w-full h-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-xs">
+          {annonce.agents.nom.charAt(0)}
+        </div>
+      )}
+    </div>
+    <p className="text-xs text-gray-400">Par {annonce.agents.nom}</p>
+  </div>
+)}
                   <Link
                     href={`/annonces/${annonce.id}`}
                     className="block w-full border border-blue-800 text-blue-800 py-2 rounded-md text-sm font-medium hover:bg-blue-800 hover:text-white transition text-center"

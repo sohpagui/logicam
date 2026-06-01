@@ -21,6 +21,7 @@ type Locataire = {
   email: string
   telephone: string
   ville: string
+  photo_profil?: string
 }
 
 export default function PageDashboardLocataire() {
@@ -88,9 +89,19 @@ export default function PageDashboardLocataire() {
         {/* PROFIL LOCATAIRE */}
         <div className="bg-white border border-gray-200 rounded-lg p-6 mb-8 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-xl">
-              {locataire.nom.charAt(0)}
-            </div>
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gray-200 flex-shrink-0">
+  {locataire.photo_profil ? (
+    <img
+      src={locataire.photo_profil}
+      alt={locataire.nom}
+      className="w-full h-full object-cover"
+    />
+  ) : (
+    <div className="w-full h-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-xl">
+      {locataire.nom.charAt(0)}
+    </div>
+  )}
+</div>
             <div>
               <h2 className="font-bold text-gray-800">{locataire.nom}</h2>
               <p className="text-sm text-gray-500">{locataire.email} — {locataire.ville}</p>

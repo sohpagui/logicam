@@ -1,11 +1,12 @@
 import { supabase } from '@/lib/supabase'
 import Link from 'next/link'
 import NavBar from '../../components/NavBar'
+import CarteAgent from '../../components/CarteAgent'
 
 async function getAnnonce(id: string) {
   const { data, error } = await supabase
     .from('annonces')
-    .select('*, agents(nom, telephone, email, note, verifie)')
+    .select('*, agents(nom, telephone, email, note, verifie, photo_profil)')
     .eq('id', id)
     .single()
 
@@ -36,35 +37,34 @@ export default async function PageAnnonce({ params }: { params: Promise<{ id: st
   return (
     <main className="min-h-screen bg-gray-50">
 
-      {/* NAVIGATION */}
       <NavBar />
 
       <div className="max-w-5xl mx-auto px-6 py-10">
 
         {/* PHOTOS */}
-{annonce.photos && annonce.photos.length > 0 ? (
-  <div className="mb-8">
-    <img
-      src={annonce.photos[0]}
-      alt={annonce.titre}
-      className="w-full h-72 object-cover rounded-lg"
-    />
-    {annonce.photos.length > 1 && (
-      <div className="grid grid-cols-4 gap-2 mt-2">
-        {annonce.photos.slice(1).map((url: string, index: number) => (
-          <img
-            key={index}
-            src={url}
-            alt={`Photo ${index + 2}`}
-            className="w-full h-20 object-cover rounded-md border border-gray-200"
-          />
-        ))}
-      </div>
-    )}
-  </div>
-) : (
-  <div className="w-full h-72 bg-gray-200 rounded-lg mb-8"></div>
-)}
+        {annonce.photos && annonce.photos.length > 0 ? (
+          <div className="mb-8">
+            <img
+              src={annonce.photos[0]}
+              alt={annonce.titre}
+              className="w-full h-72 object-cover rounded-lg"
+            />
+            {annonce.photos.length > 1 && (
+              <div className="grid grid-cols-4 gap-2 mt-2">
+                {annonce.photos.slice(1).map((url: string, index: number) => (
+                  <img
+                    key={index}
+                    src={url}
+                    alt={`Photo ${index + 2}`}
+                    className="w-full h-20 object-cover rounded-md border border-gray-200"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="w-full h-72 bg-gray-200 rounded-lg mb-8"></div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -112,50 +112,18 @@ export default async function PageAnnonce({ params }: { params: Promise<{ id: st
 
           {/* CARTE AGENT */}
           <div className="lg:col-span-1">
-            <div className="bg-white border border-gray-200 rounded-lg p-6 sticky top-6">
-              <h2 className="font-semibold text-gray-800 mb-4">Agent responsable</h2>
-
-              {annonce.agents && (
-                <>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-lg">
-                      {annonce.agents.nom.charAt(0)}
-                    </div>
-                    <div>
-                      <Link href={`/agent/${annonce.agent_id}`} className="font-semibold text-blue-800 text-sm hover:underline">
-  {annonce.agents.nom}
-</Link>
-                      {annonce.agents.verifie && (
-                        <p className="text-xs text-green-600 font-medium">Agent vérifié</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {annonce.agents.note > 0 && (
-                    <p className="text-sm text-gray-500 mb-6">
-                      Note : <span className="font-semibold text-gray-800">{annonce.agents.note}/5</span>
-                    </p>
-                  )}
-                </>
-              )}
-
-              <Link
-                href={`/contact/${annonce.id}`}
-                className="block w-full bg-blue-800 text-white text-center py-3 rounded-md text-sm font-semibold hover:bg-blue-900 transition mb-3"
-              >
-                Contacter l'agent
-              </Link>
-
-              <p className="text-xs text-gray-400 text-center">
-                Vos échanges sont sécurisés et enregistrés
-              </p>
-            </div>
+            {annonce.agents && (
+              <CarteAgent
+                agent={annonce.agents}
+                agentId={annonce.agent_id}
+                annonceId={annonce.id}
+              />
+            )}
           </div>
 
         </div>
       </div>
 
-      {/* FOOTER */}
       <footer className="bg-blue-900 py-8 px-6 mt-16">
         <div className="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
           <span className="text-white font-bold text-lg">LogiCam</span>

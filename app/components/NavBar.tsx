@@ -11,6 +11,8 @@ export default function NavBar() {
   const router = useRouter()
   const [estAdmin, setEstAdmin] = useState(false)
   const [messagesNonLus, setMessagesNonLus] = useState(0)
+  const [photoProfil, setPhotoProfil] = useState('')
+  const [nomUtilisateur, setNomUtilisateur] = useState('')
 
   useEffect(() => {
     if (user) {
@@ -18,27 +20,43 @@ export default function NavBar() {
     } else {
       setEstAdmin(false)
       setMessagesNonLus(0)
+      setPhotoProfil('')
+      setNomUtilisateur('')
     }
   }, [user])
 
   async function verifierRole() {
     const { data: agent } = await supabase
       .from('agents')
-      .select('id, role')
+      .select('id, role, photo_profil, nom')
       .eq('email', user?.email)
       .single()
 
-    if (!agent) return
+    if (agent) {
+      setEstAdmin(agent.role === 'admin')
+      setPhotoProfil(agent.photo_profil || '')
+      setNomUtilisateur(agent.nom || '')
 
-    setEstAdmin(agent.role === 'admin')
+      const { count } = await supabase
+        .from('messages')
+        .select('id', { count: 'exact' })
+        .eq('agent_id', agent.id)
+        .eq('lu', false)
 
-    const { count } = await supabase
-      .from('messages')
-      .select('id', { count: 'exact' })
-      .eq('agent_id', agent.id)
-      .eq('lu', false)
+      setMessagesNonLus(count || 0)
+      return
+    }
 
-    setMessagesNonLus(count || 0)
+    const { data: locataire } = await supabase
+      .from('locataires')
+      .select('photo_profil, nom')
+      .eq('email', user?.email)
+      .single()
+
+    if (locataire) {
+      setPhotoProfil(locataire.photo_profil || '')
+      setNomUtilisateur(locataire.nom || '')
+    }
   }
 
   async function gererDeconnexion() {
@@ -72,6 +90,19 @@ export default function NavBar() {
                 <span className="absolute -top-2 -right-4 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center font-bold">
                   {messagesNonLus > 9 ? '9+' : messagesNonLus}
                 </span>
+              )}
+            </Link>
+            <Link href="/parametres" className="flex items-center gap-2">
+              {photoProfil ? (
+                <img
+                  src={photoProfil}
+                  alt="Photo de profil"
+                  className="w-8 h-8 rounded-full object-cover border border-gray-200"
+                />
+              ) : (
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-sm border border-gray-200">
+                  {nomUtilisateur.charAt(0).toUpperCase()}
+                </div>
               )}
             </Link>
             <button
