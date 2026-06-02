@@ -27,7 +27,9 @@ export default function RootLayout({
     <html lang="fr">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
-          {children}
+          <div className="max-w-[100vw] overflow-x-hidden">
+            {children}
+          </div>
         </AuthProvider>
       </body>
     </html>
