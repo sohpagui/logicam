@@ -229,7 +229,7 @@ export default function PageAdmin() {
       <div className="max-w-5xl mx-auto px-6 py-10">
 
         {/* STATISTIQUES */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <div className="bg-white border border-gray-200 rounded-lg p-5 text-center">
             <p className="text-2xl font-bold text-orange-500">{agentsEnAttente.length}</p>
             <p className="text-xs text-gray-500 mt-1">En attente</p>
@@ -249,7 +249,7 @@ export default function PageAdmin() {
         </div>
 
         {/* ONGLETS */}
-        <div className="flex border-b border-gray-200 mb-6">
+        <div className="flex flex-wrap border-b border-gray-200 mb-6 overflow-x-auto">
           <button
             onClick={() => setOnglet('en_attente')}
             className={`px-5 py-3 text-sm font-medium border-b-2 transition ${
@@ -300,7 +300,7 @@ export default function PageAdmin() {
             ) : (
               <div className="space-y-4">
                 {agentsAffiches.map((agent) => (
-                  <div key={agent.id} className="bg-white border border-gray-200 rounded-lg p-5 flex items-center justify-between">
+                  <div key={agent.id} className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-lg">
                         {agent.nom.charAt(0)}
@@ -349,7 +349,7 @@ export default function PageAdmin() {
             ) : (
               <div className="space-y-4">
                 {demandes.map((demande) => (
-                  <div key={demande.id} className="bg-white border border-gray-200 rounded-lg p-5 flex items-center justify-between">
+                  <div key={demande.id} className="bg-white border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full overflow-hidden border border-gray-200">
                         <img src={demande.photo_selfie} alt="Selfie" className="w-full h-full object-cover" />
