@@ -84,7 +84,7 @@ export default async function PageProfilAgent({ params }: { params: Promise<{ id
               </div>
               <p className="text-gray-500 text-sm mb-4">{agent.ville}</p>
 
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-gray-50 rounded-lg p-4 text-center">
                   <p className="text-xl font-bold text-blue-800">{annonces.length}</p>
                   <p className="text-xs text-gray-500 mt-1">Annonces actives</p>

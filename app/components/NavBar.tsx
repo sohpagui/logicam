@@ -118,23 +118,30 @@ export default function NavBar() {
         </div>
       </nav>
 
-      {/* NAVBAR HAUT MOBILE — logo seulement */}
-      <nav className="flex md:hidden bg-white border-b border-gray-200 px-5 py-4 justify-between items-center">
-        <Link href="/" className="text-xl font-bold text-blue-800 tracking-tight">
-          LogiCam
-        </Link>
-        {user && (
-          <Link href="/parametres">
-            {photoProfil ? (
-              <img src={photoProfil} alt="Profil" className="w-9 h-9 rounded-full object-cover border-2 border-blue-100" />
-            ) : (
-              <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-sm">
-                {nomUtilisateur.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </Link>
+      {/* NAVBAR HAUT MOBILE — logo + profil + déconnexion */}
+<nav className="flex md:hidden bg-white border-b border-gray-200 px-5 py-4 justify-between items-center">
+  <Link href="/" className="text-xl font-bold text-blue-800 tracking-tight">
+    LogiCam
+  </Link>
+  <div className="flex items-center gap-3">
+    {user && (
+      <button onClick={gererDeconnexion} className="text-xs text-red-500 font-medium border border-red-200 px-3 py-1.5 rounded-md">
+        Déconnexion
+      </button>
+    )}
+    {user && (
+      <Link href="/parametres">
+        {photoProfil ? (
+          <img src={photoProfil} alt="Profil" className="w-9 h-9 rounded-full object-cover border-2 border-blue-100" />
+        ) : (
+          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-sm">
+            {nomUtilisateur.charAt(0).toUpperCase()}
+          </div>
         )}
-      </nav>
+      </Link>
+    )}
+  </div>
+</nav>
 
       {/* BARRE DE NAVIGATION EN BAS — mobile uniquement */}
       <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-gray-200 pb-safe">
