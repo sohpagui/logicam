@@ -168,16 +168,16 @@ export default function PageDashboard() {
               </div>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-2">
   <Link
     href="/verification"
-    className="border border-blue-800 text-blue-800 px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-50 transition"
+    className="border border-blue-800 text-blue-800 px-3 py-2 rounded-md text-xs font-medium hover:bg-blue-50 transition text-center"
   >
     Vérification
   </Link>
   <Link
     href="/publier"
-    className="bg-blue-800 text-white px-5 py-2 rounded-md text-sm font-semibold hover:bg-blue-900 transition"
+    className="bg-blue-800 text-white px-3 py-2 rounded-md text-xs font-semibold hover:bg-blue-900 transition text-center"
   >
     Nouvelle annonce
   </Link>
@@ -254,7 +254,7 @@ export default function PageDashboard() {
                         {annonce.prix.toLocaleString('fr-FR')} FCFA / mois
                       </p>
                     </div>
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-2 mt-2 sm:mt-0">
                       <span className={`text-xs px-3 py-1 rounded-full font-medium ${
                         annonce.statut === 'disponible'
                           ? 'bg-green-100 text-green-700'
