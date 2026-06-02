@@ -124,20 +124,24 @@ export default function NavBar() {
     LogiCam
   </Link>
   <div className="flex items-center gap-3">
-    {user && (
-      <button onClick={gererDeconnexion} className="text-xs text-red-500 font-medium border border-red-200 px-3 py-1.5 rounded-md">
-        Déconnexion
-      </button>
-    )}
-    {user && (
-      <Link href="/parametres">
-        {photoProfil ? (
-          <img src={photoProfil} alt="Profil" className="w-9 h-9 rounded-full object-cover border-2 border-blue-100" />
-        ) : (
-          <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-sm">
-            {nomUtilisateur.charAt(0).toUpperCase()}
-          </div>
-        )}
+    {user ? (
+      <>
+        <button onClick={gererDeconnexion} className="text-xs text-red-500 font-medium border border-red-200 px-3 py-1.5 rounded-md">
+          Déconnexion
+        </button>
+        <Link href="/parametres">
+          {photoProfil ? (
+            <img src={photoProfil} alt="Profil" className="w-9 h-9 rounded-full object-cover border-2 border-blue-100" />
+          ) : (
+            <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-800 font-bold text-sm">
+              {nomUtilisateur.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </Link>
+      </>
+    ) : (
+      <Link href="/auth" className="text-sm bg-blue-800 text-white px-4 py-2 rounded-md font-medium">
+        Connexion
       </Link>
     )}
   </div>
